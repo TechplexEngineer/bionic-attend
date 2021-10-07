@@ -1,0 +1,75 @@
+{{ define "navbar" }}
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">BionicAttendance</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mb-2 mb-md-0">
+            <li class="nav-item active">
+              <a class="nav-link" aria-current="page" href="/">Home</a>
+            </li>
+{{/*            @todo ideally we would show when a route is active */}}
+{{/*            <li class="nav-item">*/}}
+{{/*              <a class="nav-link" href="/admin">Admin</a>*/}}
+{{/*            </li>*/}}
+
+          </ul>
+
+          <div class="m-auto"></div>
+
+{{/*          <form class="d-flex m-auto" action="/search" method="GET">*/}}
+{{/*            <div class="input-group">*/}}
+{{/*              <input type="text" class="form-control" placeholder="Search" name="search"  value="{{.searchTerm}}">*/}}
+{{/*              <button class="btn btn-outline-success" type="submit">Search</button>*/}}
+{{/*            </div>*/}}
+{{/*          </form>*/}}
+
+
+          <ul  class="navbar-nav mb-2 mb-md-0">
+{{/*            <li class="nav-item">*/}}
+{{/*              <a class="nav-link" href="/login">Login</a>*/}}
+{{/*            </li>*/}}
+{{/*            <li class="nav-item">*/}}
+{{/*              <a class="nav-link" href="/settings">Settings</a>*/}}
+{{/*            </li>*/}}
+{{/*          <li class="nav-item dropdown">*/}}
+{{/*            <a class="nav-link dropdown-toggle" href="#" id="dropdown08" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>*/}}
+{{/*            <ul class="dropdown-menu" aria-labelledby="dropdown08">*/}}
+{{/*              <li><a class="dropdown-item" href="#">Action</a></li>*/}}
+{{/*              <li><a class="dropdown-item" href="#">Another action</a></li>*/}}
+{{/*              <li><a class="dropdown-item" href="#">Something else here</a></li>*/}}
+{{/*            </ul>*/}}
+{{/*          </li>*/}}
+          </ul>
+
+{{/*          <ul class="nav navbar-nav navbar-right">*/}}
+{{/*            <li id="login-dropdown-list" class="dropdown">*/}}
+{{/*              <a class="dropdown-toggle" data-toggle="dropdown">Login / Register <b class="caret"></b></a>*/}}
+{{/*              <div class="dropdown-menu">*/}}
+{{/*                <input id="login-username-or-email" type="text" placeholder="Username or Email" class="form-control">*/}}
+{{/*                <input id="login-password" type="password" placeholder="Password" class="form-control">*/}}
+{{/*                <button class="btn btn-primary col-xs-12 col-sm-12" id="login-buttons-password" type="button">*/}}
+{{/*                  Sign in*/}}
+{{/*                </button>*/}}
+{{/*                <div id="login-other-options">*/}}
+{{/*                  <a id="forgot-password-link" class="pull-left">Forgot password?</a>*/}}
+{{/*                  <a id="signup-link" class="pull-right">Create account</a>*/}}
+{{/*                </div>*/}}
+{{/*              </div>*/}}
+{{/*            </li>*/}}
+{{/*          </ul>*/}}
+
+
+{{/*          <form class="d-flex">*/}}
+{{/*            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">*/}}
+{{/*            <button class="btn btn-outline-success" type="submit">Search</button>*/}}
+{{/*          </form>*/}}
+        </div>
+      </div>
+    </nav>
+  </header>
+{{ end }}

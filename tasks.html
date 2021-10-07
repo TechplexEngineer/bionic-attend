@@ -1,0 +1,27 @@
+{{define "content"}}
+	<div class="container-fluid">
+		<h1>Catalyst One Remote Tasks</h1>
+
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Task Name</th>
+					<th>Task Description</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+            {{range .tasks}}
+				<tr>
+					<td>{{.NiceName}}</td>
+					<td>{{.Desc}}</td>
+					<td>
+						<a type="button" class="btn btn-primary" href="/task/{{.Name}}">Prepare</a>
+					</td>
+				</tr>
+            {{end}}
+			</tbody>
+		</table>
+
+	</div>
+{{end}}

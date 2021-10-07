@@ -1,0 +1,15 @@
+{{define "content"}}
+  <div class="container mx-auto" style="width:500px">
+    <h1>Bionic Attendance</h1>
+    <p></p>
+
+    <form action="/checkin" method="post">
+
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="User ID" name="userid">
+        <button class="btn btn-primary" type="submit">Check In</button>
+      </div>
+
+    </form>
+  </div>
+{{end}}
