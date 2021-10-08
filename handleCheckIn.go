@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/techplexengineer/go-frc-timetrack/data"
+	"github.com/techplexengineer/go-frc-attend/data"
 	"log"
 	"net/http"
 	"time"

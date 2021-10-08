@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-timetrack/data"
+	"github.com/techplexengineer/go-frc-attend/data"
 )
 
 type Server struct {

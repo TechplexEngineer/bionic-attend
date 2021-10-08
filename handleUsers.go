@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-timetrack/data"
+	"github.com/techplexengineer/go-frc-attend/data"
 	"log"
 	"net/http"
 )

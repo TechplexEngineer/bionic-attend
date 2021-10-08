@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	server "github.com/techplexengineer/go-frc-timetrack"
+	server "github.com/techplexengineer/go-frc-attend"
 	"log"
 	"net/http"
 	"os"
 )
 
 func run() error {
-
 	svr := server.Server{}
 	svr.SetupTemplateFs(server.Resources)
 
