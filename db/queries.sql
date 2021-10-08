@@ -4,24 +4,24 @@ SELECT * FROM users
 
 -- name: ListUsers :many
 SELECT * FROM users
-    ORDER BY name;
+    ORDER BY last_name;
 
 -- name: CreateUser :exec
 INSERT INTO users (
-  userid, name, data
+  userid, first_name, last_name, data
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 );
 
 -- name: UpdateUser :exec
-UPDATE users SET name = ?, data = ?
+UPDATE users SET first_name = ?, last_name = ?, data = ?
     WHERE userid = ?;
 
 -- name: DeleteUser :exec
 DELETE FROM users
     WHERE userid = ?;
 
--- ----------------------
+
 
 -- name: CheckinUser :exec
 INSERT INTO attendance (
@@ -29,3 +29,7 @@ INSERT INTO attendance (
 ) VALUES (
   ?, ?
 );
+
+-- name: IsUserCheckedIn :one
+SELECT count(*) FROM attendance
+    WHERE date = ? AND userid = ?

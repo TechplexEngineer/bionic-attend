@@ -6,6 +6,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	RouteCreateVarUser = "userid"
+)
+
 func (s *Server) SetupRoutes() {
 	if s.router == nil {
 		s.router = mux.NewRouter()
@@ -16,6 +20,9 @@ func (s *Server) SetupRoutes() {
 	s.router.HandleFunc("/", s.handleIndex())
 
 	s.router.HandleFunc("/checkin", s.handleCheckIn())
+	s.router.HandleFunc("/create", s.handleNewUserPOST()).Methods(http.MethodPost)
+	s.router.HandleFunc("/create", s.handleNewUser()).Methods(http.MethodGet)
+	s.router.HandleFunc("/create/{"+RouteCreateVarUser+"}", s.handleNewUser())
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }

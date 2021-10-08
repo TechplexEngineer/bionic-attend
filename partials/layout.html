@@ -5,6 +5,10 @@
     {{ template "navbar" . }}
 
     <main class="flex-shrink-0 pt-2">
+        <div class="alert alert-danger" role="alert">
+            {{getFlash}}
+        </div>
+
     {{ block "content" . }}
 
         <div class="container">

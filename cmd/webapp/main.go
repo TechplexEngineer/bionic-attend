@@ -9,9 +9,15 @@ import (
 )
 
 func run() error {
+
 	svr := server.Server{}
 	svr.SetupTemplateFs(server.Resources)
 
+	dbFile := "./attendance.db"
+
+	if err := svr.SetupDB(dbFile); err != nil {
+		return fmt.Errorf("unable to setupdb: %w", err)
+	}
 	svr.SetupRoutes()
 
 	port, portFound := os.LookupEnv("PORT")

@@ -2,17 +2,16 @@
 
 package data
 
-import (
-	"database/sql"
-)
+import ()
 
 type Attendance struct {
-	Userid sql.NullString
-	Date   sql.NullString
+	Userid string
+	Date   string
 }
 
 type User struct {
-	Userid sql.NullString
-	Name   sql.NullString
-	Data   sql.NullString
+	Userid    string
+	FirstName string
+	LastName  string
+	Data      string
 }

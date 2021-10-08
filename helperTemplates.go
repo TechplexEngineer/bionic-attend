@@ -5,20 +5,44 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
+	"net/http"
 	"time"
 
 	"github.com/spf13/cast"
 )
 
-func LoadBaseTemplates(fs fs.FS) (*template.Template, error) {
-	//@note: if performance becomes a problem, we could load these once, instead of every request
-	baseLayoutTemplate := "partials/layout.html"
-	tmpl, err := template.ParseFS(fs, baseLayoutTemplate)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse baseLayoutTemplate (%s): %w", baseLayoutTemplate, err)
-	}
+const (
+	FlashCookieName = "flash"
+)
 
-	funcMap := template.FuncMap{
+func SetFlash(w http.ResponseWriter, value string) {
+	log.Printf("FLASH: %s", value)
+	//c := &http.Cookie{Name: FlashCookieName, Value: value}
+	//http.SetCookie(w, c)
+}
+
+func GetFlash(w http.ResponseWriter, r *http.Request) (string, error) {
+	c, err := r.Cookie(FlashCookieName)
+	if err != nil {
+		switch err {
+		case http.ErrNoCookie:
+			return "", nil
+		default:
+			return "", err
+		}
+	}
+	dc := &http.Cookie{Name: FlashCookieName, MaxAge: -1}
+	http.SetCookie(w, dc)
+	return c.Value, nil
+}
+
+func LoadBaseTemplates(fs fs.FS, funcs *template.FuncMap) (*template.Template, error) {
+	//@note: if performance becomes a problem, we could load these once, instead of every request
+
+	tmpl := template.New("layout.html")
+
+	tmpl = tmpl.Funcs(template.FuncMap{
 		"now": time.Now,
 		"toHTML": func(s string) (template.HTML, error) {
 			return template.HTML(s), nil
@@ -27,9 +51,17 @@ func LoadBaseTemplates(fs fs.FS) (*template.Template, error) {
 			return template.JS(s)
 		},
 		"seq": Seq,
+	})
+
+	if funcs != nil {
+		tmpl = tmpl.Funcs(*funcs)
 	}
 
-	tmpl = tmpl.Funcs(funcMap)
+	baseLayoutTemplate := "partials/layout.html"
+	tmpl, err := tmpl.ParseFS(fs, baseLayoutTemplate)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse baseLayoutTemplate (%s): %w", baseLayoutTemplate, err)
+	}
 
 	partialGlob := "partials/*.html"
 	tmpl, err = tmpl.ParseFS(fs, partialGlob)

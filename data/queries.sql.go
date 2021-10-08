@@ -5,11 +5,9 @@ package data
 
 import (
 	"context"
-	"database/sql"
 )
 
 const checkinUser = `-- name: CheckinUser :exec
-
 INSERT INTO attendance (
   userid, date
 ) VALUES (
@@ -18,11 +16,10 @@ INSERT INTO attendance (
 `
 
 type CheckinUserParams struct {
-	Userid sql.NullString
-	Date   sql.NullString
+	Userid string
+	Date   string
 }
 
-// ----------------------
 func (q *Queries) CheckinUser(ctx context.Context, arg CheckinUserParams) error {
 	_, err := q.db.ExecContext(ctx, checkinUser, arg.Userid, arg.Date)
 	return err
@@ -30,20 +27,26 @@ func (q *Queries) CheckinUser(ctx context.Context, arg CheckinUserParams) error 
 
 const createUser = `-- name: CreateUser :exec
 INSERT INTO users (
-  userid, name, data
+  userid, first_name, last_name, data
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 )
 `
 
 type CreateUserParams struct {
-	Userid sql.NullString
-	Name   sql.NullString
-	Data   sql.NullString
+	Userid    string
+	FirstName string
+	LastName  string
+	Data      string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser, arg.Userid, arg.Name, arg.Data)
+	_, err := q.db.ExecContext(ctx, createUser,
+		arg.Userid,
+		arg.FirstName,
+		arg.LastName,
+		arg.Data,
+	)
 	return err
 }
 
@@ -52,26 +55,48 @@ DELETE FROM users
     WHERE userid = ?
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, userid sql.NullString) error {
+func (q *Queries) DeleteUser(ctx context.Context, userid string) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, userid)
 	return err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT userid, name, data FROM users
+SELECT userid, first_name, last_name, data FROM users
     WHERE userid = ? LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, userid sql.NullString) (User, error) {
+func (q *Queries) GetUser(ctx context.Context, userid string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, userid)
 	var i User
-	err := row.Scan(&i.Userid, &i.Name, &i.Data)
+	err := row.Scan(
+		&i.Userid,
+		&i.FirstName,
+		&i.LastName,
+		&i.Data,
+	)
 	return i, err
 }
 
+const isUserCheckedIn = `-- name: IsUserCheckedIn :one
+SELECT count(*) FROM attendance
+    WHERE date = ? AND userid = ?
+`
+
+type IsUserCheckedInParams struct {
+	Date   string
+	Userid string
+}
+
+func (q *Queries) IsUserCheckedIn(ctx context.Context, arg IsUserCheckedInParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, isUserCheckedIn, arg.Date, arg.Userid)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const listUsers = `-- name: ListUsers :many
-SELECT userid, name, data FROM users
-    ORDER BY name
+SELECT userid, first_name, last_name, data FROM users
+    ORDER BY last_name
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -83,7 +108,12 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(&i.Userid, &i.Name, &i.Data); err != nil {
+		if err := rows.Scan(
+			&i.Userid,
+			&i.FirstName,
+			&i.LastName,
+			&i.Data,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -98,17 +128,23 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 }
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE users SET name = ?, data = ?
+UPDATE users SET first_name = ?, last_name = ?, data = ?
     WHERE userid = ?
 `
 
 type UpdateUserParams struct {
-	Name   sql.NullString
-	Data   sql.NullString
-	Userid sql.NullString
+	FirstName string
+	LastName  string
+	Data      string
+	Userid    string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser, arg.Name, arg.Data, arg.Userid)
+	_, err := q.db.ExecContext(ctx, updateUser,
+		arg.FirstName,
+		arg.LastName,
+		arg.Data,
+		arg.Userid,
+	)
 	return err
 }

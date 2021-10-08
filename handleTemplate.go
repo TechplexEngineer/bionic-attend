@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 )
@@ -9,7 +10,13 @@ import (
 func (s Server) handleTemplate(templatePath string, data interface{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
-		tmpl, err := LoadBaseTemplates(s.templateFs)
+		extraFuncs := template.FuncMap{
+			"getFlash": func() (string, error) {
+				return GetFlash(w, req)
+			},
+		}
+
+		tmpl, err := LoadBaseTemplates(s.templateFs, &extraFuncs)
 		if err != nil {
 			log.Printf("error LoadBaseTemplates - %s", err)
 			s.handleInternalError(err)(w, req)

@@ -1,8 +1,14 @@
 package server
 
 import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"github.com/techplexengineer/go-frc-timetrack/data"
 	"log"
 	"net/http"
+	"time"
 )
 
 func (s Server) handleCheckIn() http.HandlerFunc {
@@ -13,13 +19,47 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 			s.handleInternalError(err)(w, req)
 			return
 		}
+		userId := req.FormValue("userid")
 
-		log.Printf("userid: %s", req.FormValue("userid"))
+		user, err := s.db.GetUser(context.Background(), userId)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				// user does not exist
+				SetFlash(w, "User does not exist")
+				http.Redirect(w, req, "/create/"+userId, http.StatusSeeOther)
+				return
+			}
+			log.Print(fmt.Errorf("error getting user %s: %w", userId, err))
+			s.handleInternalError(err)(w, req)
+			return
+		}
 
+		count, err := s.db.IsUserCheckedIn(context.Background(), data.IsUserCheckedInParams{
+			Userid: userId,
+			Date:   time.Now().Format("2006-02-01"),
+		})
+		if err != nil {
+			err = fmt.Errorf("error IsUserCheckedIn %s: %w", userId, err)
+			s.handleInternalError(err)(w, req)
+			return
+		}
+		if count > 0 {
+			SetFlash(w, fmt.Sprintf("Success %s %s already checked in", user.FirstName, user.LastName))
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
+
+		err = s.db.CheckinUser(context.Background(), data.CheckinUserParams{
+			Userid: userId,
+			Date:   time.Now().Format("2006-02-01"),
+		})
+		if err != nil {
+			err = fmt.Errorf("error CheckinUser %s: %w", userId, err)
+			s.handleInternalError(err)(w, req)
+			return
+		}
+
+		SetFlash(w, fmt.Sprintf("Success %s %s checked in", user.FirstName, user.LastName))
 		http.Redirect(w, req, "/", http.StatusSeeOther)
-		return
-
-		// handle the request
-		//s.handleTemplate("index.html", nil)(w, req)
 	}
 }
