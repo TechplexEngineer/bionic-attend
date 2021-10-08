@@ -5,7 +5,7 @@ import (
 	_ "embed" // for schema file
 	"fmt"
 	"io/fs"
-	_ "modernc.org/sqlite" // for databae driver
+	_ "modernc.org/sqlite" // for database driver
 	"net/http"
 	"os"
 
