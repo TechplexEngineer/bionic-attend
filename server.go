@@ -50,3 +50,11 @@ func (s *Server) SetupDB(dbFile string) error {
 	s.db = data.New(db)
 	return nil
 }
+
+//func (s *Server) SetupSession() error {
+//	authKey := securecookie.GenerateRandomKey(32)
+//	encKey := securecookie.GenerateRandomKey(32)
+//	sess := sessions.NewCookieStore(authKey, encKey)
+//
+//	sess.
+//}

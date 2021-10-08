@@ -14,14 +14,14 @@ func (s Server) handleNewUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// generate data
 
-		data := struct {
-			UserId string
+		d := struct {
+			UserID string
 		}{
-			UserId: mux.Vars(req)[RouteCreateVarUser],
+			UserID: mux.Vars(req)[RouteCreateVarUser],
 		}
 
 		// handle the request
-		s.handleTemplate("create.html", data)(w, req) //@todo
+		s.handleTemplate("create.html", d)(w, req) //@todo
 	}
 }
 

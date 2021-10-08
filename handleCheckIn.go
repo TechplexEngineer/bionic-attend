@@ -19,27 +19,27 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 			s.handleInternalError(err)(w, req)
 			return
 		}
-		userId := req.FormValue("userid")
+		userID := req.FormValue("userid")
 
-		user, err := s.db.GetUser(context.Background(), userId)
+		user, err := s.db.GetUser(context.Background(), userID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				// user does not exist
 				SetFlash(w, "User does not exist")
-				http.Redirect(w, req, "/create/"+userId, http.StatusSeeOther)
+				http.Redirect(w, req, "/create/"+userID, http.StatusSeeOther)
 				return
 			}
-			log.Print(fmt.Errorf("error getting user %s: %w", userId, err))
+			log.Print(fmt.Errorf("error getting user %s: %w", userID, err))
 			s.handleInternalError(err)(w, req)
 			return
 		}
 
 		count, err := s.db.IsUserCheckedIn(context.Background(), data.IsUserCheckedInParams{
-			Userid: userId,
+			Userid: userID,
 			Date:   time.Now().Format("2006-02-01"),
 		})
 		if err != nil {
-			err = fmt.Errorf("error IsUserCheckedIn %s: %w", userId, err)
+			err = fmt.Errorf("error IsUserCheckedIn %s: %w", userID, err)
 			s.handleInternalError(err)(w, req)
 			return
 		}
@@ -50,11 +50,11 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 		}
 
 		err = s.db.CheckinUser(context.Background(), data.CheckinUserParams{
-			Userid: userId,
+			Userid: userID,
 			Date:   time.Now().Format("2006-02-01"),
 		})
 		if err != nil {
-			err = fmt.Errorf("error CheckinUser %s: %w", userId, err)
+			err = fmt.Errorf("error CheckinUser %s: %w", userID, err)
 			s.handleInternalError(err)(w, req)
 			return
 		}

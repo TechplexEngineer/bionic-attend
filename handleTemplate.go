@@ -9,10 +9,13 @@ import (
 
 func (s Server) handleTemplate(templatePath string, data interface{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-
+		flash, err := GetFlash(w, req)
+		if err != nil {
+			log.Printf("ERROR: unable to acquire flash message")
+		}
 		extraFuncs := template.FuncMap{
-			"getFlash": func() (string, error) {
-				return GetFlash(w, req)
+			"getFlash": func() string {
+				return flash
 			},
 		}
 

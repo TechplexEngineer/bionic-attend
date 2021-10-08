@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"html/template"
 	"io/fs"
 	"log"
@@ -18,8 +19,13 @@ const (
 
 func SetFlash(w http.ResponseWriter, value string) {
 	log.Printf("FLASH: %s", value)
+	cookie := sessions.NewCookie(FlashCookieName, value, &sessions.Options{
+		Path:   "/",
+		Domain: "",
+		MaxAge: 60, // seconds
+	})
 	//c := &http.Cookie{Name: FlashCookieName, Value: value}
-	//http.SetCookie(w, c)
+	http.SetCookie(w, cookie)
 }
 
 func GetFlash(w http.ResponseWriter, r *http.Request) (string, error) {
@@ -32,8 +38,13 @@ func GetFlash(w http.ResponseWriter, r *http.Request) (string, error) {
 			return "", err
 		}
 	}
-	dc := &http.Cookie{Name: FlashCookieName, MaxAge: -1}
-	http.SetCookie(w, dc)
+	cookie := sessions.NewCookie(FlashCookieName, c.Value, &sessions.Options{
+		Path:   "/",
+		Domain: "",
+		MaxAge: -1, // delete now
+	})
+	http.SetCookie(w, cookie) // delete cookie
+	log.Printf("GetFlash!")
 	return c.Value, nil
 }
 
