@@ -60,6 +60,77 @@ func (q *Queries) DeleteUser(ctx context.Context, userid string) error {
 	return err
 }
 
+const getAttendance = `-- name: GetAttendance :many
+SELECT attendance.userid, date, users.userid, first_name, last_name, data FROM attendance JOIN users ON users.userid=attendance.userid
+`
+
+type GetAttendanceRow struct {
+	Userid    string
+	Date      string
+	Userid_2  string
+	FirstName string
+	LastName  string
+	Data      string
+}
+
+// SELECT * FROM attendance;
+func (q *Queries) GetAttendance(ctx context.Context) ([]GetAttendanceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAttendance)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAttendanceRow
+	for rows.Next() {
+		var i GetAttendanceRow
+		if err := rows.Scan(
+			&i.Userid,
+			&i.Date,
+			&i.Userid_2,
+			&i.FirstName,
+			&i.LastName,
+			&i.Data,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getMeetings = `-- name: GetMeetings :many
+SELECT DISTINCT date FROM attendance
+`
+
+func (q *Queries) GetMeetings(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getMeetings)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var date string
+		if err := rows.Scan(&date); err != nil {
+			return nil, err
+		}
+		items = append(items, date)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
 SELECT userid, first_name, last_name, data FROM users
     WHERE userid = ? LIMIT 1
@@ -75,6 +146,23 @@ func (q *Queries) GetUser(ctx context.Context, userid string) (User, error) {
 		&i.Data,
 	)
 	return i, err
+}
+
+const getUserByName = `-- name: GetUserByName :one
+SELECT count(*) FROM users
+    WHERE first_name = ? AND last_name = ? LIMIT 1
+`
+
+type GetUserByNameParams struct {
+	FirstName string
+	LastName  string
+}
+
+func (q *Queries) GetUserByName(ctx context.Context, arg GetUserByNameParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getUserByName, arg.FirstName, arg.LastName)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const isUserCheckedIn = `-- name: IsUserCheckedIn :one
@@ -147,4 +235,16 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 		arg.Userid,
 	)
 	return err
+}
+
+const userIDExists = `-- name: UserIDExists :one
+SELECT count(*) FROM users
+    WHERE userid = ? LIMIT 1
+`
+
+func (q *Queries) UserIDExists(ctx context.Context, userid string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, userIDExists, userid)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }

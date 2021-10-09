@@ -23,6 +23,7 @@ func (s *Server) SetupRoutes() {
 	s.router.HandleFunc("/create", s.handleNewUserPOST()).Methods(http.MethodPost)
 	s.router.HandleFunc("/create", s.handleNewUser()).Methods(http.MethodGet)
 	s.router.HandleFunc("/create/{"+RouteCreateVarUser+"}", s.handleNewUser())
+	s.router.HandleFunc("/report", s.handleReport())
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }

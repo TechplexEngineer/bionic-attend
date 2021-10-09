@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	YMDDateFormat = "2006-01-02"
+)
+
 func (s Server) handleCheckIn() http.HandlerFunc {
 	// one time handler setup work can go here
 
@@ -36,7 +40,7 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 
 		count, err := s.db.IsUserCheckedIn(context.Background(), data.IsUserCheckedInParams{
 			Userid: userID,
-			Date:   time.Now().Format("2006-02-01"),
+			Date:   time.Now().Format(YMDDateFormat),
 		})
 		if err != nil {
 			err = fmt.Errorf("error IsUserCheckedIn %s: %w", userID, err)
@@ -51,7 +55,7 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 
 		err = s.db.CheckinUser(context.Background(), data.CheckinUserParams{
 			Userid: userID,
-			Date:   time.Now().Format("2006-02-01"),
+			Date:   time.Now().Format(YMDDateFormat),
 		})
 		if err != nil {
 			err = fmt.Errorf("error CheckinUser %s: %w", userID, err)

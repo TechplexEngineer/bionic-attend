@@ -1,0 +1,41 @@
+{{define "content"}}
+  <div class="container mx-auto">
+    <h1>Bionic Attendance</h1>
+    <p></p>
+
+    <table class="table table-striped text-nowrap">
+	    <thead>
+	      <tr>
+		      <th>First</th>
+		      <th>Last</th>
+		      <th>Total</th>
+		      <th>Percent</th>
+		      {{range .Meetings}}
+		        <th>{{.}}</th>
+				  {{end}}
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {{range .Rows}}
+			      {{$row:=.}}
+			    <tr>
+				    <td>{{.FirstName}}</td>
+				    <td>{{.LastName}}</td>
+				    <td>{{.Total}}</td>
+				    <td>{{printf "%.2f" .Percent}}%</td>
+				    {{range $.Meetings}}
+						    <td>{{index $row.Meetings .}}</td>
+				    {{end}}
+			    </tr>
+	      {{end}}
+{{/*	      {{range .Users}}*/}}
+{{/*	      <tr>*/}}
+{{/*					<td>{{.FirstName}}</td>*/}}
+{{/*		      <td>{{.LastName}}</td>*/}}
+{{/*	      </tr>*/}}
+{{/*	      {{end}}*/}}
+	    </tbody>
+    </table>
+
+  </div>
+{{end}}
