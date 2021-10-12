@@ -6,7 +6,8 @@ volumes:
 services:
 
   browser:
-    image: balenablocks/browser:raspberrypi4-64
+    build:
+      context: ./balena/Dockerfile.raspberrypi
     privileged: true # required for UDEV to find plugged in peripherals such as a USB mouse
     network_mode: host
     ports:
@@ -16,6 +17,7 @@ services:
       LAUNCH_URL: "http://localhost:80"
       SHOW_CURSOR: 1
       ENABLE_GPU: 1
+      KIOSK: 1
   
   bionic-attend:
     restart: always
@@ -28,7 +30,6 @@ services:
       - "80"
     environment:
       PORT: "80"
-      KIOSK: 1
       DBPATH: /src/data/attendance.db
     volumes:
       - 'database:/src/data'
