@@ -1,17 +1,32 @@
 version: '2'
 
 volumes:
-  settings:                          # Only required if using PERSISTENT flag (see below)
+  database:
 
 services:
 
   browser:
-    build:
-      context: "./balena/browser"
+    image: balenablocks/browser
     privileged: true # required for UDEV to find plugged in peripherals such as a USB mouse
     network_mode: host
     ports:
         - '5011' # management API (optional)
         - '35173' # Chromium debugging port (optional)
+    environment:
+      LAUNCH_URL: "http://localhost:80"
+      SHOW_CURSOR: 1
+      ENABLE_GPU: 1
+  
+  bionic-attend:
+    restart: always
+    build:
+      context: "."
+      args:
+        GOARCH: arm # build for arm compadibility
+    network_mode: host
+    ports:
+      - "80"
+    environment:
+      PORT: "80"
     volumes:
-      - 'settings:/data' # Only required if using PERSISTENT flag (see below)
+      - 'database:/src/data'
