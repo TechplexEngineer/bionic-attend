@@ -67,7 +67,7 @@ func (s Server) handleReport() http.HandlerFunc {
 					FirstName: row.FirstName,
 					LastName:  row.LastName,
 					Total:     1,
-					Percent:   1.0 / float64(totalMeetings),
+					Percent:   (1.0 / float64(totalMeetings)) * 100,
 					Meetings:  make(map[string]string),
 				}
 				d.Meetings[row.Date] = "x"

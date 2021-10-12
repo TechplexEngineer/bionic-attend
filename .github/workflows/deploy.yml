@@ -38,5 +38,5 @@ jobs:
 
           balena login --token ${{secrets.BALENA_TOKEN}}
           
-          balena deploy BionicAttend
+          balena push BionicAttend
     
