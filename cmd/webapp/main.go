@@ -2,19 +2,23 @@ package main
 
 import (
 	"fmt"
-	server "github.com/techplexengineer/go-frc-attend"
 	"log"
 	"net/http"
 	"os"
+
+	server "github.com/techplexengineer/go-frc-attend"
 )
 
 func run() error {
 	svr := server.Server{}
 	svr.SetupTemplateFs(server.Resources)
 
-	dbFile := "./attendance.db"
+	dbPath, dbPathFound := os.LookupEnv("DBPATH")
+	if !dbPathFound {
+		dbPath = "./attendance.db"
+	}
 
-	if err := svr.SetupDB(dbFile); err != nil {
+	if err := svr.SetupDB(dbPath); err != nil {
 		return fmt.Errorf("unable to setupdb: %w", err)
 	}
 	svr.SetupRoutes()
