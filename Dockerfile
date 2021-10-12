@@ -27,6 +27,8 @@ RUN go build -ldflags '-extldflags "-static"' -o healthcheck ./cmd/healthcheck/.
 ################################
 FROM scratch
 
+ENV TZ "America/New_York"
+
 # ca-certificates to allow secure connections to other https servers
 # NB: this pulls directly from the upstream image, which already has ca-certificates:
 COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

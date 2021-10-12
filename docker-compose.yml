@@ -6,7 +6,7 @@ volumes:
 services:
 
   browser:
-    image: balenablocks/browser
+    image: balenablocks/browser:raspberrypi4-64
     privileged: true # required for UDEV to find plugged in peripherals such as a USB mouse
     network_mode: host
     ports:
@@ -28,5 +28,6 @@ services:
       - "80"
     environment:
       PORT: "80"
+      KIOSK: 1
     volumes:
       - 'database:/src/data'
