@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -72,17 +71,17 @@ func (s Server) handleReport() http.HandlerFunc {
 				}
 				d.Meetings[row.Date] = "x"
 				Rows[row.Userid] = &d
-				log.Printf("Creating: %#v %v", row.Userid, row.Date)
+				// log.Printf("Creating: %#v %v", row.Userid, row.Date)
 				continue
 			}
 			// not missing so update
 			userRow.Meetings[row.Date] = "x"
 			userRow.Total++
 			userRow.Percent = float64(userRow.Total) / float64(totalMeetings)
-			log.Printf("Updating: %s %v", row.Userid, row.Date)
+			// log.Printf("Updating: %s %v", row.Userid, row.Date)
 		}
 
-		log.Printf("Rows: %#v", Rows)
+		// log.Printf("Rows: %#v", Rows)
 
 		d := struct {
 			Meetings      []string

@@ -36,5 +36,19 @@
   </style>
   <script src="/static/jquery/jquery-3.5.1.slim.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="/static/datatables/dataTables.bootstrap5.min.css" />
+  
+  <script type="text/javascript" src="/static/datatables/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="/static/datatables/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    $(document).ready(()=>{
+      $(".datatable").DataTable({
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]], // add "all" to dropdown
+        pageLength: -1, //default to all entries
+      });
+    })
+  </script>
+
 </head>
 {{ end }}
