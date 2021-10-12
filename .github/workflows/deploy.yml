@@ -1,0 +1,42 @@
+name: Deploy to Balena Fleet
+
+# limit to a single build of this pipeline
+# Cancel any previous builds in favor of this build
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERSION: 1.0.${{ github.run_number }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Latest Balena CLI
+        run: |
+          set -euo pipefail
+          
+          url=$(.github/get_balena-cli_url.sh)
+          curl -L -o /tmp/balena.zip ${url}
+          unzip /tmp/balena.zip -d /opt
+          rm /tmp/balena.zip
+          export PATH=$PATH:/opt/balena-cli
+
+          
+          trap "balena logout" EXIT # be sure to log out when done
+
+          balena login --token ${{secrets.BALENA_TOKEN}}
+          
+          balena deploy BionicAttend
+    
