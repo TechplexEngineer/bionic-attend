@@ -29,5 +29,6 @@ services:
     environment:
       PORT: "80"
       KIOSK: 1
+      DBPATH: /src/data/attendance.db
     volumes:
       - 'database:/src/data'
