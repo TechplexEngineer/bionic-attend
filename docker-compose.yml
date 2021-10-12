@@ -7,7 +7,7 @@ services:
 
   browser:
     build:
-      context: ./balena/Dockerfile.raspberrypi
+      context: ./balena
     privileged: true # required for UDEV to find plugged in peripherals such as a USB mouse
     network_mode: host
     ports:
