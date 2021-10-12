@@ -94,26 +94,6 @@ func (s Server) handleReport() http.HandlerFunc {
 			TotalMeetings: totalMeetings,
 		}
 
-		// generate data
-
-		//
-
-		//
-		//users, err := s.db.ListUsers(context.Background())
-		//if err != nil {
-		//	err = fmt.Errorf("error ListUsers - %w", err)
-		//	s.handleInternalError(err)(w, req)
-		//	return
-		//}
-
-		//d := struct {
-		//	Meetings []string
-		//	Users    []data.User
-		//}{
-		//	Meetings: meetings,
-		//	Users:    users,
-		//}
-
 		// handle the request
 		s.handleTemplate("report.html", d)(w, req)
 	}
