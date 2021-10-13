@@ -11,6 +11,7 @@ func (s Server) handleReport() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
 		type RowData struct {
+			UserID    string
 			FirstName string
 			LastName  string
 			Total     int64
@@ -63,6 +64,7 @@ func (s Server) handleReport() http.HandlerFunc {
 			userRow, ok := Rows[row.Userid]
 			if !ok { // missing, so we create the entry
 				d := RowData{
+					UserID:    row.Userid,
 					FirstName: row.FirstName,
 					LastName:  row.LastName,
 					Total:     1,

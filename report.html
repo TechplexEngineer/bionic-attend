@@ -19,7 +19,7 @@
 	      {{range .Rows}}
 			      {{$row:=.}}
 			    <tr>
-				    <td>{{.FirstName}}</td>
+				    <td title="{{.UserID}}">{{.FirstName}}</td>
 				    <td>{{.LastName}}</td>
 				    <td>{{.Total}}</td>
 				    <td>{{printf "%.2f" .Percent}}%</td>

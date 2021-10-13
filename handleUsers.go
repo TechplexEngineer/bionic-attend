@@ -66,10 +66,10 @@ func CreateNewUser(db *data.Queries, handleUserMsg func(msg string, path Route) 
 		return handleUserMsg("UserID must be longer than 3 characters.", RouteCreate)
 	}
 	if len(firstName) <= 3 {
-		return handleUserMsg("First Name must be longer than 3 characters.", RouteCreate)
+		return handleUserMsg("First Name must be longer than 3 characters.", RouteCreate) // not ideal as data entered is lost
 	}
 	if len(lastName) <= 3 {
-		return handleUserMsg("Last Name must be longer than 3 characters.", RouteCreate)
+		return handleUserMsg("Last Name must be longer than 3 characters.", RouteCreate) // not ideal as data entered is lost
 	}
 
 	// check if user exists
