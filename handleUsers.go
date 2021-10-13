@@ -38,50 +38,72 @@ func (s Server) handleNewUserPOST() http.HandlerFunc {
 			return
 		}
 
-		// check if user exists
-		count, err := s.db.GetUserByName(context.Background(), data.GetUserByNameParams{
-			FirstName: req.FormValue("firstname"),
-			LastName:  req.FormValue("lastname"),
-		})
-		if err != nil {
-			err = fmt.Errorf("error GetUserByName - %s", err)
+		firstName := req.FormValue("firstname")
+		lastName := req.FormValue("lastname")
+		userID := req.FormValue("userid")
+
+		handleUserMsg := func(message string, redirectPath Route) error {
+			SetFlash(w, message)
+			if string(redirectPath) != "" {
+				redirectPath = RouteCreate
+			}
+			http.Redirect(w, req, string(redirectPath), http.StatusSeeOther)
+			return nil
+		}
+
+		if err := CreateNewUser(s.db, handleUserMsg, firstName, lastName, userID); err != nil {
+			err = fmt.Errorf("error CreateNewUser - %w", err)
 			s.handleInternalError(err)(w, req)
 			return
 		}
-		if count > 0 {
-			SetFlash(w, fmt.Sprintf("User '%s %s' already exists", req.FormValue("firstname"), req.FormValue("lastname")))
-			http.Redirect(w, req, "/", http.StatusSeeOther)
-			return
-		}
 
-		// check if userid is unique
-		count, err = s.db.UserIDExists(context.Background(), req.FormValue("userid"))
-		if err != nil {
-			err = fmt.Errorf("error UserIDExists - %s", err)
-			s.handleInternalError(err)(w, req)
-			return
-		}
-		if count > 0 {
-			SetFlash(w, fmt.Sprintf("User ID '%s' is already in use", req.FormValue("userid")))
-			http.Redirect(w, req, "/", http.StatusSeeOther)
-			return
-		}
-
-		params := data.CreateUserParams{
-			Userid:    req.FormValue("userid"),
-			FirstName: req.FormValue("firstname"),
-			LastName:  req.FormValue("lastname"),
-			Data:      "{}", // for future expansion
-		}
-		err = s.db.CreateUser(context.Background(), params)
-		if err != nil {
-			err = fmt.Errorf("error CreateUser(%v) - %s", params, err)
-			s.handleInternalError(err)(w, req)
-			return
-		}
-		log.Printf("CreateUser(%#v)", params)
-
-		SetFlash(w, "User created")
-		http.Redirect(w, req, "/", http.StatusSeeOther)
 	}
+}
+
+func CreateNewUser(db *data.Queries, handleUserMsg func(msg string, path Route) error, firstName, lastName, userID string) error {
+
+	if len(userID) <= 3 {
+		return handleUserMsg("UserID must be longer than 3 characters.", RouteCreate)
+	}
+	if len(firstName) <= 3 {
+		return handleUserMsg("First Name must be longer than 3 characters.", RouteCreate)
+	}
+	if len(lastName) <= 3 {
+		return handleUserMsg("Last Name must be longer than 3 characters.", RouteCreate)
+	}
+
+	// check if user exists
+	count, err := db.GetUserByName(context.Background(), data.GetUserByNameParams{
+		FirstName: firstName,
+		LastName:  lastName,
+	})
+	if err != nil {
+		return fmt.Errorf("error GetUserByName - %s", err)
+	}
+	if count > 0 {
+		return handleUserMsg(fmt.Sprintf("User '%s %s' already exists", firstName, lastName), "/")
+	}
+
+	// check if userid is unique
+	count, err = db.UserIDExists(context.Background(), userID)
+	if err != nil {
+		return fmt.Errorf("error UserIDExists - %s", err)
+	}
+	if count > 0 {
+		return handleUserMsg(fmt.Sprintf("User ID '%s' is already in use", userID), "/")
+	}
+
+	params := data.CreateUserParams{
+		Userid:    userID,
+		FirstName: firstName,
+		LastName:  lastName,
+		Data:      "{}", // for future expansion
+	}
+
+	if err := db.CreateUser(context.Background(), params); err != nil {
+		return fmt.Errorf("error CreateUser(%v) - %s", params, err)
+	}
+	log.Printf("CreateUser(%#v)", params)
+
+	return handleUserMsg("User created", RouteHome)
 }

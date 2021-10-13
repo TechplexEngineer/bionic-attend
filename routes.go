@@ -6,8 +6,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type Route string
+
 const (
 	RouteCreateVarUser = "userid"
+
+	RouteHome    Route = "/"
+	RouteCheckin Route = "/checkin"
+	RouteCreate  Route = "/create"
+	RouteReport  Route = "/report"
 )
 
 func (s *Server) SetupRoutes() {
@@ -17,13 +24,13 @@ func (s *Server) SetupRoutes() {
 
 	s.router.PathPrefix("/static/").Handler(http.FileServer(http.FS(s.templateFs))).Methods(http.MethodGet)
 
-	s.router.HandleFunc("/", s.handleIndex())
+	s.router.HandleFunc(string(RouteHome), s.handleIndex())
 
-	s.router.HandleFunc("/checkin", s.handleCheckIn())
-	s.router.HandleFunc("/create", s.handleNewUserPOST()).Methods(http.MethodPost)
-	s.router.HandleFunc("/create", s.handleNewUser()).Methods(http.MethodGet)
+	s.router.HandleFunc(string(RouteCheckin), s.handleCheckIn())
+	s.router.HandleFunc(string(RouteCreate), s.handleNewUserPOST()).Methods(http.MethodPost)
+	s.router.HandleFunc(string(RouteCreate), s.handleNewUser()).Methods(http.MethodGet)
 	s.router.HandleFunc("/create/{"+RouteCreateVarUser+"}", s.handleNewUser())
-	s.router.HandleFunc("/report", s.handleReport())
+	s.router.HandleFunc(string(RouteReport), s.handleReport())
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }
