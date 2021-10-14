@@ -79,7 +79,7 @@ func (s Server) handleReport() http.HandlerFunc {
 			// not missing so update
 			userRow.Meetings[row.Date] = "x"
 			userRow.Total++
-			userRow.Percent = float64(userRow.Total) / float64(totalMeetings)
+			userRow.Percent = float64(userRow.Total) / float64(totalMeetings) * 100
 			// log.Printf("Updating: %s %v", row.Userid, row.Date)
 		}
 
