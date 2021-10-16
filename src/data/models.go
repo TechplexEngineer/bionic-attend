@@ -2,8 +2,6 @@
 
 package data
 
-import ()
-
 type Attendance struct {
 	Userid string
 	Date   string

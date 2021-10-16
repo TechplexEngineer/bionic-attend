@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	server "github.com/techplexengineer/go-frc-attend"
+	"github.com/techplexengineer/go-frc-attend/src"
 	"log"
 	"net/http"
 	"os"
 )
 
 func run() error {
-	svr := server.Server{}
-	svr.SetupTemplateFs(server.Resources)
+	svr := src.Server{}
+	svr.SetupTemplateFs(src.Resources)
 
 	dbFile := "./attendance.db"
 
@@ -36,6 +36,8 @@ func run() error {
 }
 
 func main() {
+	getwd, _ := os.Getwd()
+	log.Print(getwd)
 	err := run()
 	if err != nil {
 		log.Printf("Error: %s", err)

@@ -1,4 +1,4 @@
-package server
+package src
 
 import (
 	"net/http"
@@ -15,6 +15,8 @@ func (s *Server) SetupRoutes() {
 		s.router = mux.NewRouter()
 	}
 
+	s.router.StrictSlash(true)
+
 	s.router.PathPrefix("/static/").Handler(http.FileServer(http.FS(s.templateFs))).Methods(http.MethodGet)
 
 	s.router.HandleFunc("/", s.handleIndex())
@@ -28,7 +30,7 @@ func (s *Server) SetupRoutes() {
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }
 
-//func (s *server) adminOnly(h http.HandlerFunc) http.HandlerFunc {
+// func (s *server) adminOnly(h http.HandlerFunc) http.HandlerFunc {
 //    return func(w http.ResponseWriter, r *http.Request) {
 //        if !currentUser(r).IsAdmin {
 //            http.NotFound(w, r)

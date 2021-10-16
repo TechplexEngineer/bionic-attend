@@ -1,9 +1,8 @@
 //+build fsres
 
-package server
+package src
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -12,14 +11,15 @@ import (
 func Test_setupResources(t *testing.T) {
 	packageDir, _ := os.Getwd()
 
-	// Since the test working directory is different than the working directory when main is run
+	// Since the test working directory for this test is different
+	// then the working directory when main is run
 	for {
-		if fileExists("main.go") {
+		if fileExists("go.mod") {
 			break
 		}
 		err := os.Chdir("..")
 		if err != nil {
-			t.Fatalf("unable to find main.go - %s", err)
+			t.Fatalf("unable to find go.mod - %s", err)
 		}
 		cwd, _ := os.Getwd()
 		if cwd == "/" {
@@ -35,7 +35,7 @@ func Test_setupResources(t *testing.T) {
 	_, err := dirFS.Open(filename)
 	if err != nil {
 		getwd, _ := os.Getwd()
-		fmt.Printf("Started in package dir %s, changed to %s", packageDir, getwd)
+		log.Printf("Started in package dir %s, changed to %s", packageDir, getwd)
 		t.Fatalf("unable to open '%s' - %s", filename, err)
 	}
 }

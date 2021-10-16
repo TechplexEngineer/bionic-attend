@@ -1,11 +1,11 @@
-package server
+package src
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/go-frc-attend/src/data"
 	"log"
 	"net/http"
 	"time"
@@ -14,6 +14,12 @@ import (
 const (
 	YMDDateFormat = "2006-01-02"
 )
+
+func (s Server) handleIndex() http.HandlerFunc {
+	// one time handler setup work can go here
+
+	return s.handleTemplate("checkin.html", nil)
+}
 
 func (s Server) handleCheckIn() http.HandlerFunc {
 	// one time handler setup work can go here

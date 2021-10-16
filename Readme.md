@@ -14,8 +14,8 @@ Students scan their student IDs when they enter the shop.
 
 ## Technical
 Data is stored in a SQLite database in two tables, users and attendance.
-The database structure is specified in [schema.sql](db/schema.sql).
-THe queries are specified in [queries.sql](db/queries.sql).
+The database structure is specified in [schema.sql](src/db/schema.sql).
+THe queries are specified in [queries.sql](src/db/queries.sql).
 This project uses [sqlc](https://github.com/kyleconroy/sqlc) to generate go code which converts the query results into
 go datatypes. 
 

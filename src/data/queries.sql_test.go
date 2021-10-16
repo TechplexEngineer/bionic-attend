@@ -13,12 +13,11 @@ import (
 	"github.com/matryer/is"
 )
 
-func TestQueries_GetUser(t *testing.T) {
+func TestQueries_GetUser_no_rows(t *testing.T) {
 	is := is.New(t)
 
 	dataFile := "./testdb.db"
-	err := os.Remove(dataFile)
-	is.NoErr(err)
+	is.NoErr(os.RemoveAll(dataFile))
 
 	driverName := "sqlite" //https://gitlab.com/cznic/sqlite/blob/v1.13.1/examples/example1/main.go#L30
 	db, err := sql.Open(driverName, dataFile)
@@ -30,12 +29,16 @@ func TestQueries_GetUser(t *testing.T) {
 
 	q := New(db)
 
-	user, err := q.GetUser(context.Background(), sql.NullString{String: "123"})
+	user, err := q.GetUser(context.Background(), "123")
 
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
-		log.Printf("no rows")
-		return
+		log.Printf("no rows") // desired outcome
+	} else {
+		is.NoErr(err)
+		log.Printf("%#v", user)
 	}
-	is.NoErr(err)
-	log.Printf("%#v", user)
+
+	is.NoErr(db.Close())
+
+	is.NoErr(os.Remove(dataFile))
 }

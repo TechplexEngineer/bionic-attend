@@ -1,6 +1,6 @@
 //+build !fsres
 
-package server
+package src
 
 import (
 	"log"

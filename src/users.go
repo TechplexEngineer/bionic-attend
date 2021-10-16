@@ -1,10 +1,10 @@
-package server
+package src
 
 import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/go-frc-attend/src/data"
 	"log"
 	"net/http"
 )
@@ -22,7 +22,7 @@ func (s Server) handleNewUser() http.HandlerFunc {
 		}
 
 		// handle the request
-		s.handleTemplate("create.html", d)(w, req) //@todo
+		s.handleTemplate("userCreate.html", d)(w, req) //@todo
 	}
 }
 

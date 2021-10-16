@@ -1,4 +1,4 @@
-package server
+package src
 
 import (
 	"database/sql"
@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/go-frc-attend/src/data"
 )
 
 type Server struct {

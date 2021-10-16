@@ -1,6 +1,6 @@
 // +build fsres
 
-package server
+package src
 
 import (
 	"io/fs"
@@ -21,5 +21,5 @@ func init() {
 }
 
 func setupResources() fs.FS {
-	return os.DirFS(".")
+	return os.DirFS("./src")
 }
