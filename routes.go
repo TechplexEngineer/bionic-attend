@@ -9,12 +9,13 @@ import (
 type Route string
 
 const (
-	RouteCreateVarUser = "userid"
+	RouteVarUser = "userid"
 
 	RouteHome    Route = "/"
 	RouteCheckin Route = "/checkin"
 	RouteCreate  Route = "/create"
 	RouteReport  Route = "/report"
+	RouteEdit    Route = "/edit"
 )
 
 func (s *Server) SetupRoutes() {
@@ -29,8 +30,9 @@ func (s *Server) SetupRoutes() {
 	s.router.HandleFunc(string(RouteCheckin), s.handleCheckIn())
 	s.router.HandleFunc(string(RouteCreate), s.handleNewUserPOST()).Methods(http.MethodPost)
 	s.router.HandleFunc(string(RouteCreate), s.handleNewUser()).Methods(http.MethodGet)
-	s.router.HandleFunc("/create/{"+RouteCreateVarUser+"}", s.handleNewUser())
+	s.router.HandleFunc(string(RouteCreate+"{"+RouteVarUser+"}"), s.handleNewUser())
 	s.router.HandleFunc(string(RouteReport), s.handleReport())
+	s.router.HandleFunc(string(RouteEdit+"{"+RouteVarUser+"}"), s.handleReport())
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }

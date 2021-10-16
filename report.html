@@ -12,7 +12,8 @@
 		      <th>Percent</th>
 		      {{range .Meetings}}
 		        <th>{{.}}</th>
-				  {{end}}
+			  {{end}}
+			  <th>Actions</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -26,6 +27,9 @@
 				    {{range $.Meetings}}
 						    <td>{{index $row.Meetings .}}</td>
 				    {{end}}
+					<td>
+						<a href="/edit/{{.UserID}}" class="btn btn-info btn-sm">Edit</a>
+					</td>
 			    </tr>
 	      {{end}}
 {{/*	      {{range .Users}}*/}}

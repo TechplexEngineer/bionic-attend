@@ -18,7 +18,7 @@ func (s Server) handleNewUser() http.HandlerFunc {
 		d := struct {
 			UserID string
 		}{
-			UserID: mux.Vars(req)[RouteCreateVarUser],
+			UserID: mux.Vars(req)[RouteVarUser],
 		}
 
 		// handle the request
