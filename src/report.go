@@ -12,6 +12,7 @@ func (s Server) handleReport() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
 		type RowData struct {
+			UserID    string
 			FirstName string
 			LastName  string
 			Total     int64
@@ -64,10 +65,11 @@ func (s Server) handleReport() http.HandlerFunc {
 			userRow, ok := Rows[row.Userid]
 			if !ok { // missing, so we create the entry
 				d := RowData{
+					UserID:    row.Userid,
 					FirstName: row.FirstName,
 					LastName:  row.LastName,
 					Total:     1,
-					Percent:   1.0 / float64(totalMeetings),
+					Percent:   1.0 / float64(totalMeetings) * 100,
 					Meetings:  make(map[string]string),
 				}
 				d.Meetings[row.Date] = "x"
@@ -78,7 +80,7 @@ func (s Server) handleReport() http.HandlerFunc {
 			// not missing so update
 			userRow.Meetings[row.Date] = "x"
 			userRow.Total++
-			userRow.Percent = float64(userRow.Total) / float64(totalMeetings)
+			userRow.Percent = float64(userRow.Total) / float64(totalMeetings) * 100
 			log.Printf("Updating: %s %v", row.Userid, row.Date)
 		}
 
