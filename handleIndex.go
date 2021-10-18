@@ -1,21 +1,6 @@
 package server
 
-import (
-	"net/http"
-)
-
-func (s Server) handleIndex() http.HandlerFunc {
-	// one time handler setup work can go here
-
-	return func(w http.ResponseWriter, req *http.Request) {
-		// generate data
-
-		// handle the request
-		s.handleTemplate("index.html", nil)(w, req)
-	}
-}
-
-//func (s *server) handleIndex(templateFs fs.FS) http.HandlerFunc {
+//func (s *server) handleHome(templateFs fs.FS) http.HandlerFunc {
 //	var (
 //		init   sync.Once
 //		tpl    *template.Template

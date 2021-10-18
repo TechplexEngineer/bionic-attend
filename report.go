@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+const (
+	TemplateReport = "report.html"
+)
+
 func (s Server) handleReport() http.HandlerFunc {
 	// one time handler setup work can go here
 
@@ -20,29 +24,7 @@ func (s Server) handleReport() http.HandlerFunc {
 		}
 
 		// map of [userid] to RowData
-		Rows := map[string]*RowData{
-			//"123": {
-			//	FirstName: "Blake",
-			//	LastName:  "Bourque",
-			//	Total:     2,
-			//
-			//	Meetings: map[string]string{
-			//		"2021-10-1": "x",
-			//		"2021-10-2": "",
-			//		"2021-10-3": "x",
-			//	},
-			//},
-			//"456": {
-			//	FirstName: "Ice",
-			//	LastName:  "Pack",
-			//	Total:     2,
-			//	Meetings: map[string]string{
-			//		"2021-10-1": "",
-			//		"2021-10-2": "x",
-			//		"2021-10-3": "x",
-			//	},
-			//},
-		}
+		Rows := map[string]*RowData{}
 
 		attendance, err := s.db.GetAttendance(context.Background())
 		if err != nil {
@@ -96,6 +78,6 @@ func (s Server) handleReport() http.HandlerFunc {
 		}
 
 		// handle the request
-		s.handleTemplate("report.html", d)(w, req)
+		s.handleTemplate(TemplateReport, d)(w, req)
 	}
 }

@@ -12,8 +12,20 @@ import (
 )
 
 const (
-	YMDDateFormat = "2006-01-02"
+	YMDDateFormat   = "2006-01-02"
+	TemplateCheckin = "checkin.html"
 )
+
+func (s Server) handleHome() http.HandlerFunc {
+	// one time handler setup work can go here
+
+	return func(w http.ResponseWriter, req *http.Request) {
+		// generate data
+
+		// handle the request
+		s.handleTemplate(TemplateCheckin, nil)(w, req)
+	}
+}
 
 func (s Server) handleCheckIn() http.HandlerFunc {
 	// one time handler setup work can go here

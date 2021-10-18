@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+const (
+	TemplateCreate = "create.html"
+)
+
 func (s Server) handleNewUser() http.HandlerFunc {
 	// one time handler setup work can go here
 
@@ -22,7 +26,7 @@ func (s Server) handleNewUser() http.HandlerFunc {
 		}
 
 		// handle the request
-		s.handleTemplate("create.html", d)(w, req) //@todo
+		s.handleTemplate(TemplateCreate, d)(w, req) //@todo
 	}
 }
 

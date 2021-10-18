@@ -25,7 +25,7 @@ func (s *Server) SetupRoutes() {
 
 	s.router.PathPrefix("/static/").Handler(http.FileServer(http.FS(s.templateFs))).Methods(http.MethodGet)
 
-	s.router.HandleFunc(string(RouteHome), s.handleIndex())
+	s.router.HandleFunc(string(RouteHome), s.handleHome())
 
 	s.router.HandleFunc(string(RouteCheckin), s.handleCheckIn())
 	s.router.HandleFunc(string(RouteCreate), s.handleNewUserPOST()).Methods(http.MethodPost)
