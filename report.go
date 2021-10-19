@@ -26,14 +26,14 @@ func (s Server) handleReport() http.HandlerFunc {
 		// map of [userid] to RowData
 		Rows := map[string]*RowData{}
 
-		attendance, err := s.db.GetAttendance(context.Background())
+		attendance, err := s.queries.GetAttendance(context.Background())
 		if err != nil {
 			err = fmt.Errorf("error GetAttendance - %w", err)
 			s.handleInternalError(err)(w, req)
 			return
 		}
 
-		meetings, err := s.db.GetMeetings(context.Background())
+		meetings, err := s.queries.GetMeetings(context.Background())
 		if err != nil {
 			err = fmt.Errorf("error GetMeetings - %w", err)
 			s.handleInternalError(err)(w, req)

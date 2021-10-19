@@ -1,0 +1,28 @@
+{{define "content"}}
+  <div class="container mx-auto" style="width:500px">
+    <h1>Edit User</h1>
+
+    <form action="/edit" method="post">
+
+			<div class="mb-3">
+				<label for="firstname" class="form-label">First Name</label>
+				<input autocomplete="off" type="text" class="form-control" name="firstname" value="{{.User.FirstName}}" autofocus required>
+			</div>
+
+	    <div class="mb-3">
+				<label for="lastname" class="form-label">Last Name</label>
+				<input autocomplete="off" type="text" class="form-control" name="lastname" value="{{.User.LastName}}" required>
+			</div>
+
+	    <div class="mb-3">
+				<label for="userid" class="form-label">User ID</label>
+				<input autocomplete="off" type="text" class="form-control" name="newuserid" value="{{.User.Userid}}" required>
+			</div>
+
+	    <input type="hidden" name="existinguserid" value="{{.User.Userid}}">
+
+	    <button class="btn btn-primary" type="submit">Update User</button>
+
+    </form>
+  </div>
+{{end}}

@@ -18,6 +18,10 @@ const (
 	RouteEdit    Route = "/edit"
 )
 
+func NewRoute(route Route, param string) Route {
+	return Route(string(route) + "/" + param)
+}
+
 func (s *Server) SetupRoutes() {
 	if s.router == nil {
 		s.router = mux.NewRouter()
@@ -30,9 +34,10 @@ func (s *Server) SetupRoutes() {
 	s.router.HandleFunc(string(RouteCheckin), s.handleCheckIn())
 	s.router.HandleFunc(string(RouteCreate), s.handleNewUserPOST()).Methods(http.MethodPost)
 	s.router.HandleFunc(string(RouteCreate), s.handleNewUser()).Methods(http.MethodGet)
-	s.router.HandleFunc(string(RouteCreate+"{"+RouteVarUser+"}"), s.handleNewUser())
+	s.router.HandleFunc(string(RouteCreate+"/{"+RouteVarUser+"}"), s.handleNewUser())
 	s.router.HandleFunc(string(RouteReport), s.handleReport())
-	s.router.HandleFunc(string(RouteEdit+"{"+RouteVarUser+"}"), s.handleReport())
+	s.router.HandleFunc(string(RouteEdit+"/{"+RouteVarUser+"}"), s.handleEdit()).Methods(http.MethodGet)
+	s.router.HandleFunc(string(RouteEdit), s.handleEditPOST()).Methods(http.MethodPost)
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }
