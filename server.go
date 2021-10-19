@@ -17,7 +17,8 @@ type Server struct {
 	// shared state between routes
 	router     *mux.Router
 	templateFs fs.FS
-	db         *data.Queries
+	queries    *data.Queries
+	db         *sql.DB
 }
 
 // ServeHTTP implements the http.Handler interface which allows the server to be passed to http.ListenAndServe
@@ -34,20 +35,21 @@ var schema string
 
 func (s *Server) SetupDB(dbFile string) error {
 	driverName := "sqlite" //https://gitlab.com/cznic/sqlite/blob/v1.13.1/examples/example1/main.go#L30
-	db, err := sql.Open(driverName, dbFile)
+	var err error
+	s.db, err = sql.Open(driverName, dbFile)
 	if err != nil {
 		return err
 	}
 
 	if _, err := os.Stat(dbFile); os.IsNotExist(err) {
 		// dbFile needs to be created
-		_, err = db.Exec(schema)
+		_, err = s.db.Exec(schema)
 		if err != nil {
 			return fmt.Errorf("unable to create tables [[%s]] - %w", schema, err)
 		}
 	}
 
-	s.db = data.New(db)
+	s.queries = data.New(s.db)
 	return nil
 }
 

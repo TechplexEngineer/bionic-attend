@@ -37,7 +37,7 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 		}
 		userID := req.FormValue("userid")
 
-		user, err := s.db.GetUser(context.Background(), userID)
+		user, err := s.queries.GetUser(context.Background(), userID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				// user does not exist
@@ -50,7 +50,7 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 			return
 		}
 
-		count, err := s.db.IsUserCheckedIn(context.Background(), data.IsUserCheckedInParams{
+		count, err := s.queries.IsUserCheckedIn(context.Background(), data.IsUserCheckedInParams{
 			Userid: userID,
 			Date:   time.Now().Format(YMDDateFormat),
 		})
@@ -65,7 +65,7 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 			return
 		}
 
-		err = s.db.CheckinUser(context.Background(), data.CheckinUserParams{
+		err = s.queries.CheckinUser(context.Background(), data.CheckinUserParams{
 			Userid: userID,
 			Date:   time.Now().Format(YMDDateFormat),
 		})

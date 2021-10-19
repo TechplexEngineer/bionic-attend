@@ -237,6 +237,38 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	return err
 }
 
+const updateUserIDinAttendance = `-- name: UpdateUserIDinAttendance :exec
+UPDATE attendance
+SET userid = ?
+WHERE userid = ?
+`
+
+type UpdateUserIDinAttendanceParams struct {
+	Userid   string
+	Userid_2 string
+}
+
+func (q *Queries) UpdateUserIDinAttendance(ctx context.Context, arg UpdateUserIDinAttendanceParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserIDinAttendance, arg.Userid, arg.Userid_2)
+	return err
+}
+
+const updateUserIDinUsers = `-- name: UpdateUserIDinUsers :exec
+UPDATE users
+SET userid = ?
+WHERE userid = ?
+`
+
+type UpdateUserIDinUsersParams struct {
+	Userid   string
+	Userid_2 string
+}
+
+func (q *Queries) UpdateUserIDinUsers(ctx context.Context, arg UpdateUserIDinUsersParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserIDinUsers, arg.Userid, arg.Userid_2)
+	return err
+}
+
 const userIDExists = `-- name: UserIDExists :one
 SELECT count(*) FROM users
     WHERE userid = ? LIMIT 1

@@ -25,6 +25,16 @@ INSERT INTO users (
 UPDATE users SET first_name = ?, last_name = ?, data = ?
     WHERE userid = ?;
 
+-- name: UpdateUserIDinAttendance :exec
+UPDATE attendance
+SET userid = ?
+WHERE userid = ?;
+
+-- name: UpdateUserIDinUsers :exec
+UPDATE users
+SET userid = ?
+WHERE userid = ?;
+
 -- name: DeleteUser :exec
 DELETE FROM users
     WHERE userid = ?;
