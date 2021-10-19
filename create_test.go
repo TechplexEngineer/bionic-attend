@@ -15,14 +15,14 @@ import (
 func SetupTestDB(t *testing.T) *data.Queries {
 	is := is.New(t)
 
-	dataFile := "./testdb.db"
+	dataFile := "./testdb.queries"
 	err := os.RemoveAll(dataFile)
 	is.NoErr(err)
 
 	driverName := "sqlite" //https://gitlab.com/cznic/sqlite/blob/v1.13.1/examples/example1/main.go#L30
 	db, err := sql.Open(driverName, dataFile)
 	is.NoErr(err)
-	file, err := ioutil.ReadFile("./db/schema.sql")
+	file, err := ioutil.ReadFile("./queries/schema.sql")
 	is.NoErr(err)
 	_, err = db.Exec(string(file))
 	is.NoErr(err)

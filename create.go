@@ -48,32 +48,30 @@ func (s Server) handleNewUserPOST() http.HandlerFunc {
 
 		handleUserMsg := func(message string, redirectPath Route) error {
 			SetFlash(w, message)
-			if string(redirectPath) != "" {
-				redirectPath = RouteCreate
+			if string(redirectPath) == "" {
+				redirectPath = RouteHome
 			}
 			http.Redirect(w, req, string(redirectPath), http.StatusSeeOther)
 			return nil
 		}
 
-		if err := CreateNewUser(s.db, handleUserMsg, firstName, lastName, userID); err != nil {
+		if err := CreateNewUser(s.queries, handleUserMsg, firstName, lastName, userID); err != nil {
 			err = fmt.Errorf("error CreateNewUser - %w", err)
 			s.handleInternalError(err)(w, req)
 			return
 		}
-
 	}
 }
 
 func CreateNewUser(db *data.Queries, handleUserMsg func(msg string, path Route) error, firstName, lastName, userID string) error {
-
-	if len(userID) <= 3 {
-		return handleUserMsg("UserID must be longer than 3 characters.", RouteCreate)
+	if len(userID) <= 2 {
+		return handleUserMsg("UserID must be 3 characters or longer.", NewRoute(RouteCreate, userID))
 	}
-	if len(firstName) <= 3 {
-		return handleUserMsg("First Name must be longer than 3 characters.", RouteCreate) // not ideal as data entered is lost
+	if len(firstName) == 0 {
+		return handleUserMsg("First Name must be 1 character or longer.", NewRoute(RouteCreate, userID)) // not ideal as data entered is lost
 	}
-	if len(lastName) <= 3 {
-		return handleUserMsg("Last Name must be longer than 3 characters.", RouteCreate) // not ideal as data entered is lost
+	if len(lastName) == 0 {
+		return handleUserMsg("Last Name must be 1 character or longer.", NewRoute(RouteCreate, userID)) // not ideal as data entered is lost
 	}
 
 	// check if user exists
@@ -85,7 +83,7 @@ func CreateNewUser(db *data.Queries, handleUserMsg func(msg string, path Route) 
 		return fmt.Errorf("error GetUserByName - %s", err)
 	}
 	if count > 0 {
-		return handleUserMsg(fmt.Sprintf("User '%s %s' already exists", firstName, lastName), "/")
+		return handleUserMsg(fmt.Sprintf("User '%s %s' already exists", firstName, lastName), RouteHome)
 	}
 
 	// check if userid is unique
@@ -94,7 +92,7 @@ func CreateNewUser(db *data.Queries, handleUserMsg func(msg string, path Route) 
 		return fmt.Errorf("error UserIDExists - %s", err)
 	}
 	if count > 0 {
-		return handleUserMsg(fmt.Sprintf("User ID '%s' is already in use", userID), "/")
+		return handleUserMsg(fmt.Sprintf("User ID '%s' is already in use", userID), RouteHome)
 	}
 
 	params := data.CreateUserParams{
