@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"github.com/gorilla/sessions"
 	"html/template"
 	"io/fs"
 	"log"
@@ -16,12 +15,21 @@ const (
 
 func SetFlash(w http.ResponseWriter, value string) {
 	log.Printf("FLASH: %s", value)
-	cookie := sessions.NewCookie(FlashCookieName, value, &sessions.Options{
-		Path:   "/",
-		Domain: "",
-		MaxAge: 60, // seconds
-	})
-	//c := &http.Cookie{Name: FlashCookieName, Value: value}
+	maxAgeSec := 60 // seconds
+
+	// The Expires field calculated based on the MaxAge value, for Internet
+	// Explorer compatibility.
+	d := time.Duration(maxAgeSec) * time.Second
+	expires := time.Now().Add(d)
+
+	cookie := &http.Cookie{
+		Name:    FlashCookieName,
+		Value:   value,
+		Path:    "/",
+		Domain:  "",
+		MaxAge:  maxAgeSec, // seconds
+		Expires: expires,
+	}
 	http.SetCookie(w, cookie)
 }
 
@@ -35,18 +43,22 @@ func GetFlash(w http.ResponseWriter, r *http.Request) (string, error) {
 			return "", err
 		}
 	}
-	cookie := sessions.NewCookie(FlashCookieName, c.Value, &sessions.Options{
-		Path:   "/",
-		Domain: "",
-		MaxAge: -1, // delete now
-	})
+
+	cookie := &http.Cookie{
+		Name:    FlashCookieName,
+		Path:    "/",
+		Domain:  "",
+		MaxAge:  -1, // remove now
+		Expires: time.Unix(1, 0),
+	}
+
 	http.SetCookie(w, cookie) // delete cookie
 	log.Printf("GetFlash!")
 	return c.Value, nil
 }
 
 func LoadBaseTemplates(fs fs.FS, funcs *template.FuncMap) (*template.Template, error) {
-	//@note: if performance becomes a problem, we could load these once, instead of every request
+	// @note: if performance becomes a problem, we could load these once, instead of every request
 
 	tmpl := template.New("layout.html")
 
