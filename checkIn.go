@@ -37,6 +37,12 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 		}
 		userID := req.FormValue("userid")
 
+		if len(userID) == 0 {
+			SetFlash(w, "User ID is required")
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
+
 		user, err := s.queries.GetUser(context.Background(), userID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
