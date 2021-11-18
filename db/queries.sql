@@ -51,7 +51,7 @@ SELECT count(*) FROM attendance
     WHERE date = ? AND userid = ?;
 
 -- name: GetMeetings :many
-SELECT DISTINCT date FROM attendance;
+SELECT DISTINCT date, count(*) FROM attendance GROUP BY date;
 
 -- name: GetAttendance :many
 -- SELECT * FROM attendance;

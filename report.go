@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/techplexengineer/go-frc-attend/data"
 	"net/http"
 )
 
@@ -68,7 +69,7 @@ func (s Server) handleReport() http.HandlerFunc {
 		// log.Printf("Rows: %#v", Rows)
 
 		d := struct {
-			Meetings      []string
+			Meetings      []data.GetMeetingsRow
 			TotalMeetings int
 			Rows          map[string]*RowData
 		}{
