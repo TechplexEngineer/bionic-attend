@@ -120,7 +120,7 @@ func (s Server) handleHidePOST() http.HandlerFunc {
 		}
 
 		SetFlash(w, "User successfully hidden")
-		http.Redirect(w, req, string(RouteHome), http.StatusSeeOther)
+		http.Redirect(w, req, string(RouteReport), http.StatusSeeOther)
 	}
 }
 

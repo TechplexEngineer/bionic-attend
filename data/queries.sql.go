@@ -106,22 +106,27 @@ func (q *Queries) GetAttendance(ctx context.Context) ([]GetAttendanceRow, error)
 }
 
 const getMeetings = `-- name: GetMeetings :many
-SELECT DISTINCT date FROM attendance
+SELECT DISTINCT date, count(*) FROM attendance GROUP BY date
 `
 
-func (q *Queries) GetMeetings(ctx context.Context) ([]string, error) {
+type GetMeetingsRow struct {
+	Date  string
+	Count int64
+}
+
+func (q *Queries) GetMeetings(ctx context.Context) ([]GetMeetingsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getMeetings)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []GetMeetingsRow
 	for rows.Next() {
-		var date string
-		if err := rows.Scan(&date); err != nil {
+		var i GetMeetingsRow
+		if err := rows.Scan(&i.Date, &i.Count); err != nil {
 			return nil, err
 		}
-		items = append(items, date)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
