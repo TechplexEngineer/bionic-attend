@@ -16,6 +16,7 @@ const (
 	RouteCreate  Route = "/create"
 	RouteReport  Route = "/report"
 	RouteEdit    Route = "/edit"
+	RouteHide    Route = "/hide"
 )
 
 func NewRoute(route Route, param string) Route {
@@ -38,6 +39,7 @@ func (s *Server) SetupRoutes() {
 	s.router.HandleFunc(string(RouteReport), s.handleReport())
 	s.router.HandleFunc(string(RouteEdit+"/{"+RouteVarUser+"}"), s.handleEdit()).Methods(http.MethodGet)
 	s.router.HandleFunc(string(RouteEdit), s.handleEditPOST()).Methods(http.MethodPost)
+	s.router.HandleFunc(string(RouteHide), s.handleHidePOST()).Methods(http.MethodPost)
 
 	// s.router.HandleFunc("/admin", s.adminOnly(s.handleAdminIndex()))
 }

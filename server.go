@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"embed"
 	_ "embed" // for schema file
 	"fmt"
 	"io/fs"
@@ -9,6 +10,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/sqlite"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/gorilla/mux"
 	"github.com/techplexengineer/go-frc-attend/data"
 )
@@ -33,6 +37,9 @@ func (s *Server) SetupTemplateFs(fs fs.FS) {
 //go:embed db/schema.sql
 var schema string
 
+//go:embed db/migrations/*.sql
+var migrationsFs embed.FS
+
 func (s *Server) SetupDB(dbFile string) error {
 	driverName := "sqlite" //https://gitlab.com/cznic/sqlite/blob/v1.13.1/examples/example1/main.go#L30
 	var err error
@@ -47,6 +54,25 @@ func (s *Server) SetupDB(dbFile string) error {
 		if err != nil {
 			return fmt.Errorf("unable to create tables [[%s]] - %w", schema, err)
 		}
+	}
+
+	migrations, err := iofs.New(migrationsFs, "db/migrations")
+	if err != nil {
+		return fmt.Errorf("unable to migrate: %w", err)
+	}
+
+	migrationDb, err := sqlite.WithInstance(s.db, &sqlite.Config{})
+	if err != nil {
+		return fmt.Errorf("unable to wrap db for migration: %w", err)
+	}
+	m, err := migrate.NewWithInstance("iofs", migrations, "sqlite", migrationDb)
+	if err != nil {
+		return fmt.Errorf("unable to prepare db for migration: %w", err)
+	}
+
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("unable to migrate up: %w", err)
 	}
 
 	s.queries = data.New(s.db)

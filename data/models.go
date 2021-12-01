@@ -14,4 +14,5 @@ type User struct {
 	FirstName string
 	LastName  string
 	Data      string
+	Hidden    int32
 }

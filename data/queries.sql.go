@@ -61,7 +61,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userid string) error {
 }
 
 const getAttendance = `-- name: GetAttendance :many
-SELECT attendance.userid, date, users.userid, first_name, last_name, data FROM attendance JOIN users ON users.userid=attendance.userid
+SELECT attendance.userid, date, users.userid, first_name, last_name, data, hidden FROM attendance JOIN users ON users.userid=attendance.userid WHERE users.hidden = FALSE
 `
 
 type GetAttendanceRow struct {
@@ -71,9 +71,9 @@ type GetAttendanceRow struct {
 	FirstName string
 	LastName  string
 	Data      string
+	Hidden    int32
 }
 
-// SELECT * FROM attendance;
 func (q *Queries) GetAttendance(ctx context.Context) ([]GetAttendanceRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAttendance)
 	if err != nil {
@@ -90,6 +90,7 @@ func (q *Queries) GetAttendance(ctx context.Context) ([]GetAttendanceRow, error)
 			&i.FirstName,
 			&i.LastName,
 			&i.Data,
+			&i.Hidden,
 		); err != nil {
 			return nil, err
 		}
@@ -132,8 +133,8 @@ func (q *Queries) GetMeetings(ctx context.Context) ([]string, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT userid, first_name, last_name, data FROM users
-    WHERE userid = ? LIMIT 1
+SELECT userid, first_name, last_name, data, hidden FROM users
+    WHERE userid = ? AND hidden = FALSE LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, userid string) (User, error) {
@@ -144,13 +145,14 @@ func (q *Queries) GetUser(ctx context.Context, userid string) (User, error) {
 		&i.FirstName,
 		&i.LastName,
 		&i.Data,
+		&i.Hidden,
 	)
 	return i, err
 }
 
 const getUserByName = `-- name: GetUserByName :one
 SELECT count(*) FROM users
-    WHERE first_name = ? AND last_name = ? LIMIT 1
+    WHERE first_name = ? AND last_name = ? AND hidden = FALSE LIMIT 1
 `
 
 type GetUserByNameParams struct {
@@ -167,7 +169,7 @@ func (q *Queries) GetUserByName(ctx context.Context, arg GetUserByNameParams) (i
 
 const isUserCheckedIn = `-- name: IsUserCheckedIn :one
 SELECT count(*) FROM attendance
-    WHERE date = ? AND userid = ?
+    WHERE date = ? AND userid = ? AND hidden = FALSE
 `
 
 type IsUserCheckedInParams struct {
@@ -183,7 +185,8 @@ func (q *Queries) IsUserCheckedIn(ctx context.Context, arg IsUserCheckedInParams
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT userid, first_name, last_name, data FROM users
+SELECT userid, first_name, last_name, data, hidden FROM users
+		WHERE  hidden = FALSE
     ORDER BY last_name
 `
 
@@ -201,6 +204,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.FirstName,
 			&i.LastName,
 			&i.Data,
+			&i.Hidden,
 		); err != nil {
 			return nil, err
 		}
@@ -213,6 +217,17 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const softDeleteUser = `-- name: SoftDeleteUser :exec
+UPDATE users
+		SET hidden = TRUE
+    WHERE userid = ?
+`
+
+func (q *Queries) SoftDeleteUser(ctx context.Context, userid string) error {
+	_, err := q.db.ExecContext(ctx, softDeleteUser, userid)
+	return err
 }
 
 const updateUser = `-- name: UpdateUser :exec
@@ -271,7 +286,7 @@ func (q *Queries) UpdateUserIDinUsers(ctx context.Context, arg UpdateUserIDinUse
 
 const userIDExists = `-- name: UserIDExists :one
 SELECT count(*) FROM users
-    WHERE userid = ? LIMIT 1
+    WHERE userid = ? AND hidden = FALSE LIMIT 1
 `
 
 func (q *Queries) UserIDExists(ctx context.Context, userid string) (int64, error) {

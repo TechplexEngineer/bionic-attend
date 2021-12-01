@@ -92,6 +92,38 @@ func (s Server) handleEditPOST() http.HandlerFunc {
 	}
 }
 
+func (s Server) handleHidePOST() http.HandlerFunc {
+	// one time handler setup work can go here
+
+	return func(w http.ResponseWriter, req *http.Request) {
+		// generate data
+		err := req.ParseForm()
+		if err != nil {
+			err = fmt.Errorf("error ParseForm - %w", err)
+			s.handleInternalError(err)(w, req)
+			return
+		}
+
+		userid := req.FormValue("userid")
+		if len(userid) < 2 {
+			err = fmt.Errorf("error missing userid")
+			s.handleInternalError(err)(w, req)
+			return
+		}
+
+		//log.Printf("If it were implemented, the user would be hidden!")
+		err = s.queries.SoftDeleteUser(context.Background(), userid)
+		if err != nil {
+			err = fmt.Errorf("unable to soft delete user: %w", err)
+			s.handleInternalError(err)(w, req)
+			return
+		}
+
+		SetFlash(w, "User successfully hidden")
+		http.Redirect(w, req, string(RouteHome), http.StatusSeeOther)
+	}
+}
+
 func UpdateUser(db *data.Queries, handleUserMsg func(msg string, path Route) error, firstName, lastName, existingUserID, newUserID string) error {
 	if len(newUserID) <= 2 {
 		return handleUserMsg("UserID must be 3 characters or longer.", NewRoute(RouteEdit, existingUserID))

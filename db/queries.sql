@@ -1,17 +1,18 @@
 -- name: GetUser :one
 SELECT * FROM users
-    WHERE userid = ? LIMIT 1;
+    WHERE userid = ? AND hidden = FALSE LIMIT 1;
 
 -- name: UserIDExists :one
 SELECT count(*) FROM users
-    WHERE userid = ? LIMIT 1;
+    WHERE userid = ? AND hidden = FALSE LIMIT 1;
 
 -- name: GetUserByName :one
 SELECT count(*) FROM users
-    WHERE first_name = ? AND last_name = ? LIMIT 1;
+    WHERE first_name = ? AND last_name = ? AND hidden = FALSE LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
+		WHERE  hidden = FALSE
     ORDER BY last_name;
 
 -- name: CreateUser :exec
@@ -39,6 +40,11 @@ WHERE userid = ?;
 DELETE FROM users
     WHERE userid = ?;
 
+-- name: SoftDeleteUser :exec
+UPDATE users
+		SET hidden = TRUE
+    WHERE userid = ?;
+
 -- name: CheckinUser :exec
 INSERT INTO attendance (
   userid, date
@@ -48,12 +54,11 @@ INSERT INTO attendance (
 
 -- name: IsUserCheckedIn :one
 SELECT count(*) FROM attendance
-    WHERE date = ? AND userid = ?;
+    WHERE date = ? AND userid = ? AND hidden = FALSE;
 
 -- name: GetMeetings :many
 SELECT DISTINCT date FROM attendance;
 
 -- name: GetAttendance :many
--- SELECT * FROM attendance;
-SELECT * FROM attendance JOIN users ON users.userid=attendance.userid;
+SELECT * FROM attendance JOIN users ON users.userid=attendance.userid WHERE users.hidden = FALSE;
 -- SELECT *, count(*) AS total FROM attendance JOIN users ON users.userid=attendance.userid GROUP BY date;
