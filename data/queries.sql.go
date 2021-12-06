@@ -174,7 +174,7 @@ func (q *Queries) GetUserByName(ctx context.Context, arg GetUserByNameParams) (i
 
 const isUserCheckedIn = `-- name: IsUserCheckedIn :one
 SELECT count(*) FROM attendance
-    WHERE date = ? AND userid = ? AND hidden = FALSE
+    WHERE date = ? AND userid = ?
 `
 
 type IsUserCheckedInParams struct {

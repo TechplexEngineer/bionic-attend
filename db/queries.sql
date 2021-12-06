@@ -54,7 +54,7 @@ INSERT INTO attendance (
 
 -- name: IsUserCheckedIn :one
 SELECT count(*) FROM attendance
-    WHERE date = ? AND userid = ? AND hidden = FALSE;
+    WHERE date = ? AND userid = ?;
 
 -- name: GetMeetings :many
 SELECT DISTINCT date, count(*) FROM attendance GROUP BY date;
