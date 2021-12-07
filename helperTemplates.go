@@ -53,7 +53,6 @@ func GetFlash(w http.ResponseWriter, r *http.Request) (string, error) {
 	}
 
 	http.SetCookie(w, cookie) // delete cookie
-	log.Printf("GetFlash!")
 	return c.Value, nil
 }
 

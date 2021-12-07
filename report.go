@@ -73,7 +73,7 @@ func (s Server) handleReport() http.HandlerFunc {
 			TotalMeetings int
 			Rows          map[string]*RowData
 		}{
-			Meetings:      meetings, //[]string{"2021-10-1", "2021-10-2", "2021-10-3"},
+			Meetings:      reverseArray(meetings), //[]string{"2021-10-1", "2021-10-2", "2021-10-3"},
 			Rows:          Rows,
 			TotalMeetings: totalMeetings,
 		}
@@ -81,4 +81,11 @@ func (s Server) handleReport() http.HandlerFunc {
 		// handle the request
 		s.handleTemplate(TemplateReport, d)(w, req)
 	}
+}
+
+func reverseArray(arr []data.GetMeetingsRow) []data.GetMeetingsRow {
+	for i, j := 0, len(arr)-1; i < j; i, j = i+1, j-1 {
+		arr[i], arr[j] = arr[j], arr[i]
+	}
+	return arr
 }
