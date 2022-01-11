@@ -139,7 +139,7 @@ func (q *Queries) GetMeetings(ctx context.Context) ([]GetMeetingsRow, error) {
 
 const getUser = `-- name: GetUser :one
 SELECT userid, first_name, last_name, data, hidden FROM users
-    WHERE userid = ? AND hidden = FALSE LIMIT 1
+    WHERE userid = ? LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, userid string) (User, error) {
@@ -232,6 +232,17 @@ UPDATE users
 
 func (q *Queries) SoftDeleteUser(ctx context.Context, userid string) error {
 	_, err := q.db.ExecContext(ctx, softDeleteUser, userid)
+	return err
+}
+
+const unHideUser = `-- name: UnHideUser :exec
+UPDATE users
+		SET hidden = FALSE
+    WHERE userid = ?
+`
+
+func (q *Queries) UnHideUser(ctx context.Context, userid string) error {
+	_, err := q.db.ExecContext(ctx, unHideUser, userid)
 	return err
 }
 

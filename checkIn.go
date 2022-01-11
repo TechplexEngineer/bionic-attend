@@ -81,6 +81,13 @@ func (s Server) handleCheckIn() http.HandlerFunc {
 			return
 		}
 
+		err = s.queries.UnHideUser(context.Background(), userID)
+		if err != nil {
+			err = fmt.Errorf("error UnHideUser %s: %w", userID, err)
+			s.handleInternalError(err)(w, req)
+			return
+		}
+
 		SetFlash(w, fmt.Sprintf("Success %s %s checked in", user.FirstName, user.LastName))
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 	}

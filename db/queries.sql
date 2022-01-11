@@ -1,6 +1,6 @@
 -- name: GetUser :one
 SELECT * FROM users
-    WHERE userid = ? AND hidden = FALSE LIMIT 1;
+    WHERE userid = ? LIMIT 1;
 
 -- name: UserIDExists :one
 SELECT count(*) FROM users
@@ -43,6 +43,11 @@ DELETE FROM users
 -- name: SoftDeleteUser :exec
 UPDATE users
 		SET hidden = TRUE
+    WHERE userid = ?;
+
+-- name: UnHideUser :exec
+UPDATE users
+		SET hidden = FALSE
     WHERE userid = ?;
 
 -- name: CheckinUser :exec
