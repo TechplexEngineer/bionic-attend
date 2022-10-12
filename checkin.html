@@ -66,6 +66,11 @@
 
 
       for (const event of events) {
+        const minDiff = 5 /*days*/ * 24 * 60 * 60 * 1000;
+        const diff = Date.now() - (new Date(event.dateStr).getTime());
+        if (diff > minDiff) {
+          continue // skip old dates
+        }
         handleCountDown(event);
       }
 
@@ -103,7 +108,8 @@
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
           // Display the result in the element with id="demo"
-          tplInstance.querySelector(".event_counter").innerHTML = days + "d " + hours + "h "
+          const $eventCounter = tplInstance.querySelector(".event_counter");
+          $eventCounter.innerHTML = days + "d " + hours + "h "
                   + minutes + "m " + seconds + "s ";
 
           // If the count down is finished, write some text
@@ -111,7 +117,7 @@
             if (typeof interval != "undefined") {
               clearInterval(interval);
             }
-            $eventName.innerHTML = "Is Here!";
+            $eventCounter.innerHTML = "Is Here!";
           }
         };
         countdown();
