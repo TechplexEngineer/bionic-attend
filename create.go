@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/bionic-attend/data"
 	"log"
 	"net/http"
 )

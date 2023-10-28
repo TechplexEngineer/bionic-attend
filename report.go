@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/bionic-attend/data"
 	"net/http"
 )
 

@@ -1,4 +1,4 @@
-module github.com/techplexengineer/go-frc-attend
+module github.com/techplexengineer/bionic-attend
 
 go 1.16
 

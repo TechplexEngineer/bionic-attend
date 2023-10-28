@@ -5,16 +5,16 @@ import (
 	"embed"
 	_ "embed" // for schema file
 	"fmt"
+	"github.com/golang-migrate/migrate/v4"
 	"io/fs"
 	_ "modernc.org/sqlite" // for database driver
 	"net/http"
 	"os"
 
-	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/gorilla/mux"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/bionic-attend/data"
 )
 
 type Server struct {

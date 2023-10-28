@@ -3,7 +3,7 @@ package server
 import (
 	"database/sql"
 	"github.com/matryer/is"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/bionic-attend/data"
 	"io/ioutil"
 	"log"
 	"os"

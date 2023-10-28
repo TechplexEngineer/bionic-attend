@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	server "github.com/techplexengineer/go-frc-attend"
+	server "github.com/techplexengineer/bionic-attend"
 )
 
 func run() error {

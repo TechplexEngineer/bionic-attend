@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/techplexengineer/go-frc-attend/data"
+	"github.com/techplexengineer/bionic-attend/data"
 	"log"
 	"net/http"
 	"time"
